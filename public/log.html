@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>VMHook Live Log</title>
+<style>
+body { background:#111; color:#0f0; font-family:monospace; }
+#log { white-space:pre-wrap; }
+button { margin-bottom:10px; }
+</style>
+</head>
+<body>
+<h2>VMHook Live Log</h2>
+
+<button onclick="addTestLog()">Add Test Log</button>
+
+<div id="log"></div>
+
+<script>
+async function fetchLogs(){
+    const res = await fetch('/vmhook-logs')
+    const data = await res.json()
+    document.getElementById('log').textContent =
+        data.map(l => JSON.stringify(l)).join("\n")
+}
+
+async function addTestLog(){
+    await fetch('/add-log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            opcode: Math.floor(Math.random()*10),
+            time: Date.now()
+        })
+    })
+}
+
+setInterval(fetchLogs, 1000)
+</script>
+</body>
+</html>
